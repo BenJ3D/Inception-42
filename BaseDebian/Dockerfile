@@ -1,7 +1,9 @@
-FROM debian:buster-slim
+FROM debian:buster
 
 RUN apt update && apt install git -y && apt install zsh -y && apt install wget -y
 
+RUN apt update && \
+    apt install mariadb-server -y
 # CMD exec zsh
 
 # FROM alpine:3.15
