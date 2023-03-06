@@ -13,4 +13,4 @@ RUN rm /etc/mysql/mariadb.conf.d/50-server.cnf
 
 EXPOSE 3306
 
-ENTRYPOINT [ "bash", "./entrypoint.sh" ]				
+# ENTRYPOINT [ "bash", "./entrypoint.sh" ]				
