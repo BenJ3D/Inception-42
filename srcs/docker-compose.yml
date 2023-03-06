@@ -1,60 +1,80 @@
-version: "3.5"
-
-networks:
-  app-network:
-    name: app-network
-    driver: bridge
-
-volumes:
-  wp:
-    driver: local
-    name: wp
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/crendeha/data/wordpress
-  db:
-    driver: local
-    name: db
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/crendeha/data/mariadb
-
+version: '3'
 services:
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb
-    env_file:
-      - .env
-    volumes:
-      - db:/var/lib/mysql
-    networks:
-      - app-network
-    restart: always
-
-  wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress
-    env_file:
-      - .env
-    depends_on:
-      - mariadb
-    volumes:
-      - wp:/var/www/html
-    networks:
-      - app-network
-    restart: always
-
   nginx:
-    container_name: nginx
-    build: ./requirements/nginx
+    # image: nginx:latest
+    build:
+      context: ./srcs/requirements/nginx
+      dockerfile: Dockerfile
+    # volumes:
+    #   - db_data:/var/lib/mysql
     ports:
-      - "443:443"
-    depends_on:
-      - wordpress
-    volumes:
-      - wp:/var/www/html
-    networks:
-      - app-network
+      - "4433:443"  
+      - "8080:80"  
     restart: always
+
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: somewordpress
+    #   MYSQL_DATABASE: wordpress
+    #   MYSQL_USER: wordpress
+    #   MYSQL_PASSWORD: wordpress
+    
+
+# networks:
+#   app-network:
+#     name: app-network
+#     driver: bridge
+
+# volumes:
+#   wp:
+#     driver: local
+#     name: wp
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: /home/bducrocq/data/wordpress
+#   db:
+#     driver: local
+#     name: db
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: /home/bducrocq/data/mariadb
+
+
+
+  # mariadb:
+  #   container_name: mariadb
+  #   build: ./requirements/mariadb
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - db:/var/lib/mysql
+  #   networks:
+  #     - app-network
+  #   restart: always
+
+  # wordpress:
+  #   container_name: wordpress
+  #   build: ./requirements/wordpress
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - mariadb
+  #   volumes:
+  #     - wp:/var/www/html
+  #   networks:
+  #     - app-network
+  #   restart: always
+
+  # nginx:
+  #   container_name: nginx
+  #   build: ./requirements/nginx
+  #   ports:
+  #     - "443:443"
+  #   # depends_on:
+  #   #   - wordpress
+  #   # volumes:
+  #   #   - wp:/var/www/html
+  #   # networks:
+  #   #   - app-network
+  #   restart: always

@@ -10,7 +10,8 @@ RUN apt update && \
 
 # RUN apk update && apk add git zsh wget
 
-CMD sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+
 
 # FROM ubuntu:latest
 
