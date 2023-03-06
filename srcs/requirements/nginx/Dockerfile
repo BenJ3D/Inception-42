@@ -1,14 +1,21 @@
 FROM debian:buster
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get -yqq update && apt-get -yqq install wget zsh git
-RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+RUN apt-get -yqq update
+# RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
 
 RUN apt-get -yqq install -y nginx openssl
 
-# CMD	[ "nginx", "-g", "daemon off;" ]
-CMD	[ "bash" ]
-EXPOSE 80 443
+RUN openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=LY/O=42, Inc./CN=localhost" \
+-newkey rsa:2048 -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt;
+
+ADD ./conf/default /etc/nginx/sites-available/
+ADD ./conf/index.html	/var/www/localhost/
+
+CMD	[ "nginx", "-g", "daemon off;" ]
+EXPOSE 443
+
+# CMD	[ "bash" ]
 # RUN  apt-get update
 # RUN  apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring -y
 
@@ -26,7 +33,6 @@ EXPOSE 80 443
 
 
 # CMD	[ "nginx", "-g", "daemon off;" ]
-
 
 
 
