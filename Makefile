@@ -9,6 +9,7 @@ all: up
 
 # Règle pour lancer le docker-compose
 up:
+	mkdir -p ~/data/wordpress ~/data/mariadb
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
 
 # Règle pour arrêter le docker-compose
@@ -22,6 +23,7 @@ clean:
 # Règle pour réinitialiser Docker
 reset: stop
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all -v --remove-orphans
+	rm -rf /home/bducrocq/data/wordpress /home/bducrocq/data/mariadb
 
 # Règle pour arrêter et effacer toutes les images
 stop:

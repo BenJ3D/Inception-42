@@ -88,6 +88,7 @@ server {
 
       root /var/www/localhost;
       index index.html;
+	  server_name bducrocq.42.fr www.bducrocq.42.fr;
 
       location / {
               try_files $uri $uri/ =404;

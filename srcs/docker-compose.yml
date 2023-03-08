@@ -5,24 +5,23 @@ services:
     build:
       context: ./srcs/requirements/nginx
       dockerfile: Dockerfile
-    # volumes:
-    #   - db_data:/var/lib/mysql
+    volumes:
+      - wp:/var/www/wordpress
     ports:
-      - "5656:443"  
-
+      - "5656:443"
+    networks:
+      - netback
     restart: always
 
-    # environment:
-    #   MYSQL_ROOT_PASSWORD: somewordpress
-    #   MYSQL_DATABASE: wordpress
-    #   MYSQL_USER: wordpress
-    #   MYSQL_PASSWORD: wordpress
-    
-
-# networks:
-#   app-network:
-#     name: app-network
-#     driver: bridge
+  mariadb:
+    build:
+      context: ./srcs/requirements/mariadb
+      dockerfile: Dockerfile
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - netback
+    restart: always
 
 # volumes:
 #   wp:
@@ -31,14 +30,35 @@ services:
 #     driver_opts:
 #       type: none
 #       o: bind
-#       device: /home/bducrocq/data/wordpress
+#       device: ~/data/wordpress #TODO: passer sur home/data pour la VM
+
 #   db:
 #     driver: local
 #     name: db
 #     driver_opts:
 #       type: none
 #       o: bind
-#       device: /home/bducrocq/data/mariadb
+#       device: ~/data/mariadb #TODO: passer sur home/data pour la VM
+
+volumes:
+  wp:
+    driver: local
+  db:
+    driver: local
+
+networks:
+  netback:
+    name: netback
+    driver: bridge
+
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: somewordpress
+    #   MYSQL_DATABASE: wordpress
+    #   MYSQL_USER: wordpress
+    #   MYSQL_PASSWORD: wordpress
+    
+
+
 
 
 
