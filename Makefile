@@ -7,14 +7,18 @@ DOCKER_COMPOSE_FILE = ./srcs/docker-compose.yml
 # Règle par défaut
 all: up
 
+# Règle pour uniquement build les images du docker compose
+build :
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
+
 # Règle pour lancer le docker-compose
 up:
 	mkdir -p ~/data/wordpress ~/data/mariadb
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --force-recreate
 
 # Règle pour arrêter le docker-compose
 down:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
 
 # Règle pour effacer toutes les images
 clean:

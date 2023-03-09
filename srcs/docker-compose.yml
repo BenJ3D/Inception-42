@@ -2,26 +2,27 @@ version: '3'
 services:
   nginx:
     # image: nginx:latest
-    build:
-      context: ./srcs/requirements/nginx
-      dockerfile: Dockerfile
+    build: ./srcs/requirements/nginx
     volumes:
       - wp:/var/www/wordpress
+    restart: always
+    env_file: .env
     ports:
       - "5656:443"
     networks:
       - netback
-    restart: always
 
   mariadb:
-    build:
-      context: ./srcs/requirements/mariadb
-      dockerfile: Dockerfile
+    build: ./srcs/requirements/mariadb
+    restart: always
+    env_file: .env
     volumes:
       - db:/var/lib/mysql
     networks:
       - netback
-    restart: always
+
+  # wordpress:
+  #   build: ./srcs/requirements/wordpress
 
 # volumes:
 #   wp:
