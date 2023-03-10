@@ -1,34 +1,46 @@
-# Makefile
+NAME		= inception
 
-# Définition des variables
-DOCKER_COMPOSE = docker-compose
-DOCKER_COMPOSE_FILE = ./srcs/docker-compose.yml
+COMPOSE = docker-compose -f srcs/docker-compose.yml -p $(NAME)
 
-# Règle par défaut
-all: up
+all:		up
 
-# Règle pour uniquement build les images du docker compose
-build :
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
+re:			fclean all
 
-# Règle pour lancer le docker-compose
-up:
-	mkdir -p ~/data/wordpress ~/data/mariadb
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --force-recreate
+up:			build
+				$(COMPOSE) up --detach
 
-# Règle pour arrêter le docker-compose
 down:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
+				$(COMPOSE) down
 
-# Règle pour effacer toutes les images
-clean:
-	docker image prune -a --force
+build:	volumes
+				$(COMPOSE) build --parallel
 
-# Règle pour réinitialiser Docker
-reset: stop
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all -v --remove-orphans
-	rm -rf /home/bducrocq/data/wordpress /home/bducrocq/data/mariadb
+create:	build
+			  $(COMPOSE) create
 
-# Règle pour arrêter et effacer toutes les images
+ps:
+			  $(COMPOSE) ps --all
+
+exec:
+ifeq '$(CONTAINER)' ''
+	@echo "Usage: CONTAINER=<CONTAINER_NAME> make exec"
+else
+	$(COMPOSE) exec $(CONTAINER) /bin/bash
+endif
+
+start:
+				$(COMPOSE) start
+restart:
+				$(COMPOSE) restart
 stop:
-	docker stop $$(docker ps -a -q) && docker rm $$(docker ps -a -q)
+			  $(COMPOSE) stop
+clean:
+			  docker-compose --project-directory=srcs down --rmi all
+fclean:
+			  docker-compose --project-directory=srcs down --rmi all --volumes
+			  sudo rm -rf /home/$(USER)/data/*
+volumes:
+			  @mkdir -p /home/$(USER)/data/WordPress
+			  @mkdir -p /home/$(USER)/data/DB
+
+.PHONY: all re up down build create ps exec start restart stop clean fclean

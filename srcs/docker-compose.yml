@@ -1,101 +1,79 @@
-version: '3'
+version: "3"
+
 services:
-  nginx:
-    # image: nginx:latest
-    build: ./srcs/requirements/nginx
-    volumes:
-      - wp:/var/www/wordpress
-    restart: always
-    env_file: .env
-    ports:
-      - "5656:443"
-    networks:
-      - netback
 
   mariadb:
-    build: ./srcs/requirements/mariadb
-    restart: always
-    env_file: .env
+    container_name: mariadb
+    image: mariadb
+    build:
+      context: ./requirements/mariadb
+    env_file:
+      - .env
     volumes:
-      - db:/var/lib/mysql
+      - DB:/var/lib/mysql
     networks:
       - netback
+    ports:
+      - 3306
+    restart: on-failure
 
-  # wordpress:
-  #   build: ./srcs/requirements/wordpress
+  wordpress:
+    container_name: wordpress
+    image: wordpress
+    build:
+      context: ./requirements/wordpress
+    env_file:
+      - .env
 
-# volumes:
-#   wp:
-#     driver: local
-#     name: wp
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: ~/data/wordpress #TODO: passer sur home/data pour la VM
 
-#   db:
-#     driver: local
-#     name: db
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: ~/data/mariadb #TODO: passer sur home/data pour la VM
+    env_file:
+      - .env
+    volumes:
+      - WordPress:/var/www/html
+    networks:
+      - netback
+    ports:
+      - 9000
+      - 3306
+    restart: on-failure
+    depends_on:
+      - mariadb
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    build:
+      context: ./requirements/nginx
+    volumes:
+      - WordPress:/var/www/html
+    env_file:
+      - .env
+    networks:
+      - netback
+    ports:
+      - 443:443
+      - 9000
+    restart: on-failure
+    depends_on:
+      - wordpress
 
 volumes:
-  wp:
+
+  DB:
     driver: local
-  db:
+    driver_opts:
+      type: none
+      device: /home/$USER/data/DB
+      o: bind
+
+  WordPress:
     driver: local
+    driver_opts:
+      type: none
+      device: /home/$USER/data/WordPress
+      o: bind
 
 networks:
+
   netback:
-    name: netback
     driver: bridge
-
-    # environment:
-    #   MYSQL_ROOT_PASSWORD: somewordpress
-    #   MYSQL_DATABASE: wordpress
-    #   MYSQL_USER: wordpress
-    #   MYSQL_PASSWORD: wordpress
-    
-
-
-
-
-
-  # mariadb:
-  #   container_name: mariadb
-  #   build: ./requirements/mariadb
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - db:/var/lib/mysql
-  #   networks:
-  #     - app-network
-  #   restart: always
-
-  # wordpress:
-  #   container_name: wordpress
-  #   build: ./requirements/wordpress
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - mariadb
-  #   volumes:
-  #     - wp:/var/www/html
-  #   networks:
-  #     - app-network
-  #   restart: always
-
-  # nginx:
-  #   container_name: nginx
-  #   build: ./requirements/nginx
-  #   ports:
-  #     - "443:443"
-  #   # depends_on:
-  #   #   - wordpress
-  #   # volumes:
-  #   #   - wp:/var/www/html
-  #   # networks:
-  #   #   - app-network
-  #   restart: always
