@@ -1,79 +1,66 @@
-version: "3"
+version: '3.3'
+
+volumes:
+  volume_mariadb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o:    'bind'
+      device: ${HOME}/data/mariadb
+  volume_wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o:    'bind'
+      device: ${HOME}/data/wordpress
 
 services:
-
   mariadb:
     container_name: mariadb
-    image: mariadb
-    build:
+    build: 
       context: ./requirements/mariadb
-    env_file:
-      - .env
+      args:
+          DB_NAME: wordpress
+          MYSQL_USER: bducrocq
+          MYSQL_PASSWORD: inception
+          MYSQL_ROOT_PASSWORD: inception
     volumes:
-      - DB:/var/lib/mysql
+      - volume_mariadb:/var/lib/mysql
     networks:
-      - netback
-    ports:
-      - 3306
-    restart: on-failure
+      - docker_network
+    restart:  always
 
   wordpress:
     container_name: wordpress
-    image: wordpress
-    build:
-      context: ./requirements/wordpress
-    env_file:
-      - .env
-
-
-    env_file:
-      - .env
-    volumes:
-      - WordPress:/var/www/html
-    networks:
-      - netback
-    ports:
-      - 9000
-      - 3306
-    restart: on-failure
     depends_on:
       - mariadb
+    build: 
+      context: ./requirements/wordpress
+      args:
+          DB_NAME: wordpress
+          MYSQL_USER: bducrocq
+          MYSQL_PASSWORD: inception
+          MYSQL_ROOT_PASSWORD: inception
+    volumes:
+      - volume_wordpress:/var/www/html
+    networks:
+      - docker_network
+    restart:  always
 
   nginx:
     container_name: nginx
-    image: nginx
-    build:
-      context: ./requirements/nginx
-    volumes:
-      - WordPress:/var/www/html
-    env_file:
-      - .env
-    networks:
-      - netback
-    ports:
-      - 443:443
-      - 9000
-    restart: on-failure
     depends_on:
       - wordpress
-
-volumes:
-
-  DB:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/$USER/data/DB
-      o: bind
-
-  WordPress:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/$USER/data/WordPress
-      o: bind
-
+    build:
+      context: ./requirements/nginx
+    ports:
+      - "443:443"
+    networks:
+      - docker_network
+    volumes:
+      - volume_wordpress:/var/www/html
+    restart:  always
+    
 networks:
-
-  netback:
+  docker_network:
     driver: bridge

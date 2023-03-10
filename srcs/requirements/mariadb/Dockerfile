@@ -1,23 +1,24 @@
-FROM debian:buster-slim 
-
-ARG		MYSQL_ROOT_PASSWORD
-ARG		MYSQL_DATABASE
-ARG		MYSQL_USER
-ARG		MYSQL_PASSWORD
-
-# install mariadb
-RUN apt update && \
-    apt install mariadb-server -y
-	
-COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
-
-RUN		service mysql start &&		mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;\
-		  ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';\
-		  GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';\
-		  FLUSH PRIVILEGES;"
-
-RUN service mysql start && mysql < createdb.sql && rm -f createdb.sql
+FROM debian:buster
 
 EXPOSE 3306
 
-ENTRYPOINT	["mysqld"]
+# ARG DB_NAME
+# ARG MYSQL_USER
+# ARG MYSQL_PASSWORD
+# ARG MYSQL_ROOT_PASSWORD
+
+RUN apt-get update -y && apt-get install -y mariadb-server
+
+RUN mkdir -p /var/run/mysqld \
+	&& chown -R mysql:mysql /var/run/mysqld 
+
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
+
+RUN	echo "CREATE DATABASE IF NOT EXISTS wordpress; \
+	CREATE USER 'bducrocq'@'%' IDENTIFIED BY '4242'; \
+	GRANT ALL ON inception.* TO 'bducrocq'@'%'; \
+	FLUSH PRIVILEGES; \
+	ALTER USER 'root'@'localhost' IDENTIFIED BY '4242';" > db.sql
+RUN	service mysql start && mysql < db.sql
+
+CMD ["/usr/bin/mysqld_safe"]

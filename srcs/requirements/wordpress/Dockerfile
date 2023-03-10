@@ -1,37 +1,20 @@
-FROM	debian:buster
+FROM debian:buster
 
-ARG		MYSQL_DATABASE
-ARG		MYSQL_USER
-ARG		MYSQL_PASSWORD
-ARG		MYSQL_HOST
+EXPOSE 9000
 
-# UPDATE & UPGRADE THE SYSTEM
-RUN		apt-get update -y \
-&&		apt-get upgrade -y \
-&&		apt-get install -y wget
+RUN mkdir /var/www/
+RUN mkdir -p /var/run/ && mkdir /run/php
 
-# INSTALL & CONFIGURE PHP
-RUN		apt-get install -y php-fpm php-mysql \
-&&		service php7.3-fpm start && service php7.3-fpm stop \
-&&		sed -i "s/\/run\/php\/php7.3-fpm.sock/wordpress:9000/" /etc/php/7.3/fpm/pool.d/www.conf
+RUN apt-get update -y && apt-get install -y php7.3 php-mysqli php-fpm wget mariadb-client
 
-# INSTALL WORDPRESS
-ADD		https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/local/bin/wp
-RUN		chmod +x /usr/local/bin/wp \
-&&		mkdir -p /var/www/html/wordpress \
-&&		cd /var/www/html/wordpress \
-&&		wp core download --allow-root
+RUN cd /var/www/ && wget http://fr.wordpress.org/latest-fr_FR.tar.gz && \
+	tar -xzvf latest-fr_FR.tar.gz && rm latest-fr_FR.tar.gz
+RUN mv /var/www/wordpress/ /var/www/html
 
-# CONFIGURE WORDPRESS WITH DATABASE INFOS
-RUN		cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/database_name_here/$MYSQL_DATABASE/" /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/username_here/$MYSQL_USER/" /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/password_here/$MYSQL_PASSWORD/" /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/localhost/$MYSQL_HOST/" /var/www/html/wordpress/wp-config.php
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+RUN	chown -R www-data:www-data /var/www/html
+RUN chmod -R -wx,u+rwX,g+rX,o+rX /var/www/html
 
-# PORTS
-EXPOSE	9000 3306
+COPY ./conf/wp-config.php ./wp-config.php
 
-# START
-COPY	./conf/entrypoint.sh /tmp
-ENTRYPOINT	["sh", "/tmp/entrypoint.sh"]
+CMD [ "/usr/sbin/php-fpm7.3", "-F" ]

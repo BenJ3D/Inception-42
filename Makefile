@@ -40,7 +40,7 @@ fclean:
 			  docker-compose --project-directory=srcs down --rmi all --volumes
 			  sudo rm -rf /home/$(USER)/data/*
 volumes:
-			  @mkdir -p /home/$(USER)/data/WordPress
-			  @mkdir -p /home/$(USER)/data/DB
+			  @mkdir -p /home/$(USER)/data/wordpress
+			  @mkdir -p /home/$(USER)/data/mariadb
 
 .PHONY: all re up down build create ps exec start restart stop clean fclean
