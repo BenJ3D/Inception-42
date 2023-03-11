@@ -29,18 +29,18 @@ else
 endif
 
 start:
-				$(COMPOSE) start
+	$(COMPOSE) start
 restart:
-				$(COMPOSE) restart
+	$(COMPOSE) restart
 stop:
-			  $(COMPOSE) stop
-clean:
-			  docker-compose --project-directory=srcs down --rmi all
-fclean:
-			  docker-compose --project-directory=srcs down --rmi all --volumes
-			  sudo rm -rf /home/$(USER)/data/*
+	$(COMPOSE) stop
+clean: down
+	./clean.sh
+fclean: down
+	./fclean.sh
 volumes:
-			  @mkdir -p /home/$(USER)/data/wordpress
-			  @mkdir -p /home/$(USER)/data/mariadb
+	@mkdir -p /home/$(USER)/data/wordpress
+	@mkdir -p /home/$(USER)/data/mariadb
+
 
 .PHONY: all re up down build create ps exec start restart stop clean fclean

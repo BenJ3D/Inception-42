@@ -1,5 +1,10 @@
 FROM debian:buster
 
+ARG		WORDPRESS_DB_HOST
+ARG		WORDPRESS_DB_USER
+ARG		WORDPRESS_DB_PASSWORD
+ARG		WORDPRESS_DB_NAME
+
 EXPOSE 9000
 
 RUN mkdir /var/www/
@@ -15,6 +20,6 @@ COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
 RUN	chown -R www-data:www-data /var/www/html
 RUN chmod -R -wx,u+rwX,g+rX,o+rX /var/www/html
 
-COPY ./conf/wp-config.php ./wp-config.php
+COPY ./conf/wp-config.php ./var/www/html/wp-config.php
 
 CMD [ "/usr/sbin/php-fpm7.3", "-F" ]

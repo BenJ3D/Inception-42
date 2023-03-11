@@ -36,11 +36,8 @@ services:
       - mariadb
     build: 
       context: ./requirements/wordpress
-      args:
-          DB_NAME: wordpress
-          MYSQL_USER: bducrocq
-          MYSQL_PASSWORD: inception
-          MYSQL_ROOT_PASSWORD: inception
+    env_file:
+      - .env
     volumes:
       - volume_wordpress:/var/www/html
     networks:
