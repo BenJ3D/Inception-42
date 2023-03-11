@@ -16,7 +16,7 @@ COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
 RUN	echo "CREATE DATABASE IF NOT EXISTS wordpress; \
 	CREATE USER 'bducrocq'@'%' IDENTIFIED BY '4242'; \
-	GRANT ALL ON inception.* TO 'bducrocq'@'%'; \
+	GRANT ALL ON wordpress.* TO 'bducrocq'@'%'; \
 	FLUSH PRIVILEGES; \
 	ALTER USER 'root'@'localhost' IDENTIFIED BY '4242';" > db.sql
 RUN	service mysql start && mysql < db.sql
