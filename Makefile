@@ -42,5 +42,8 @@ volumes:
 	@mkdir -p /home/$(USER)/data/wordpress
 	@mkdir -p /home/$(USER)/data/mariadb
 
+redb: down
+	./redb.sh
 
-.PHONY: all re up down build create ps exec start restart stop clean fclean
+
+.PHONY: all re up down build create ps exec start restart stop clean fclean redb

@@ -22,26 +22,19 @@
 
 // ** Réglages MySQL - Votre hébergeur doit vous fournir ces informations. ** //
 /** Nom de la base de données de WordPress. */
-define( 'DB_NAME', 'wordpress' );
+define( 'DB_NAME', $WORDPRESS_DB_NAME );
 
 /** Utilisateur de la base de données MySQL. */
-define( 'DB_USER', 'bducrocq' );
+define( 'DB_USER', $WORDPRESS_DB_USER );
 
 /** Mot de passe de la base de données MySQL. */
-define( 'DB_PASSWORD', '4242' );
+define( 'DB_PASSWORD', $WORDPRESS_DB_PASSWORD );
 
 /** Adresse de l’hébergement MySQL. */
-define( 'DB_HOST', 'mariadb' );
+define( 'DB_HOST', $WORDPRESS_DB_HOST );
 
 /** Jeu de caractères à utiliser par la base de données lors de la création des tables. */
 define( 'DB_CHARSET', 'utf8mb4' );
-
-define('WP_SITEURL', 'https://bducrocq.42.fr');
-define('WP_HOME', 'https://bducrocq.42.fr');
-define('WP_SITE_TITLE', 'Site WordPress de Bducrocq');
-define('WP_ADMIN', 'bducrocq');
-define('WP_ADMIN_PASSWORD', '4242');
-define('WP_ADMIN_EMAIL', 'blabla@example.com');
 
 
 /**
