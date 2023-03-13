@@ -35,9 +35,9 @@ restart:
 stop:
 	$(COMPOSE) stop
 clean: down
-	./clean.sh
+	./utils/clean.sh
 fclean: down
-	./fclean.sh
+	./utils/fclean.sh
 volumes:
 	@mkdir -p /home/$(USER)/data/wordpress
 	@mkdir -p /home/$(USER)/data/mariadb
