@@ -18,7 +18,7 @@ COPY	./conf/db.sql ./
 COPY	./conf/entrypoint.sh ./
 
 # START
-ENTRYPOINT	["sh", "./entrypoint.sh"]
+# ENTRYPOINT	["sh", "./entrypoint.sh"]
 
 # RUN	echo "CREATE DATABASE IF NOT EXISTS wordpress; \
 # 	CREATE USER 'bducrocq'@'%' IDENTIFIED BY '4242'; \
