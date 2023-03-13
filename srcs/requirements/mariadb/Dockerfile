@@ -2,10 +2,10 @@ FROM debian:buster
 
 EXPOSE 3306
 
-# ARG DB_NAME
-# ARG MYSQL_USER
-# ARG MYSQL_PASSWORD
-# ARG MYSQL_ROOT_PASSWORD
+ARG DB_NAME
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG MYSQL_ROOT_PASSWORD
 
 RUN apt-get update -y && apt-get install -y mariadb-server
 
