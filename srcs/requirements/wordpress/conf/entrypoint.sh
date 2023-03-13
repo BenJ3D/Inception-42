@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# if  [ ! -f /var/www/wordpress/wp-config.php ]
-# then 
-#     wp core --allow-root download --locale=fr_FR --force 
-#     sleep 2;
-
-#     while  [ ! -f /var/www/wordpress/wp-config.php ]; do   
-#         wp core config --allow-root --dbname=wordpress --dbuser=$MARIADB_USER --dbpass=$MARIADB_PWD --dbhost=mariadb:3306
-#     done 
-
 # WORDPRESS SITE SETUP
 cd /var/www/html/wordpress
 if ! wp core is-installed --allow-root
