@@ -12,12 +12,13 @@ RUN apt-get update -y && apt-get install -y mariadb-server
 RUN mkdir -p /var/run/mysqld \
 	&& chown -R mysql:mysql /var/run/mysqld 
 
+RUN rm /etc/mysql/mariadb.conf.d/50-server.cnf 
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
-COPY	./conf/db.sql /tmp
-COPY	./conf/entrypoint.sh /tmp
+COPY	./conf/db.sql ./
+COPY	./conf/entrypoint.sh ./
 
 # START
-ENTRYPOINT	["sh", "/tmp/entrypoint.sh"]
+ENTRYPOINT	["sh", "./entrypoint.sh"]
 
 # RUN	echo "CREATE DATABASE IF NOT EXISTS wordpress; \
 # 	CREATE USER 'bducrocq'@'%' IDENTIFIED BY '4242'; \
