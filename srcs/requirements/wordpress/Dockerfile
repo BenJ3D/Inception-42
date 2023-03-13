@@ -5,6 +5,8 @@ ARG WORDPRESS_DB_USER
 ARG WORDPRESS_DB_PASSWORD
 ARG WORDPRESS_DB_NAME
 
+ENV WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST} WORDPRESS_DB_USER=${WORDPRESS_DB_USER} WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD} WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME}
+
 # UPDATE & UPGRADE THE SYSTEM
 RUN		apt-get update -y \
 &&		apt-get upgrade -y \
@@ -23,18 +25,18 @@ RUN		chmod +x /usr/local/bin/wp \
 &&		wp core download --allow-root
 
 # CONFIGURE WORDPRESS WITH DATABASE INFOS
-RUN		cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/database_name_here/wordpress/" /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/username_here/bducrocq/" /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/password_here/4242/" /var/www/html/wordpress/wp-config.php \
-&&		sed -i "s/localhost/mariadb/" /var/www/html/wordpress/wp-config.php
+# RUN		cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php \
+# &&		sed -i "s/database_name_here/wordpress/" /var/www/html/wordpress/wp-config.php \
+# &&		sed -i "s/username_here/bducrocq/" /var/www/html/wordpress/wp-config.php \
+# &&		sed -i "s/password_here/4242/" /var/www/html/wordpress/wp-config.php \
+# &&		sed -i "s/localhost/mariadb/" /var/www/html/wordpress/wp-config.php
 
 # # CONFIGURE WORDPRESS WITH DATABASE INFOS
-# RUN		cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php \
-# &&		sed -i "s/database_name_here/$WORDPRESS_DB_NAME/" /var/www/html/wordpress/wp-config.php \
-# &&		sed -i "s/username_here/$WORDPRESS_DB_USER/" /var/www/html/wordpress/wp-config.php \
-# &&		sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/" /var/www/html/wordpress/wp-config.php \
-# &&		sed -i "s/localhost/$WORDPRESS_DB_HOST/" /var/www/html/wordpress/wp-config.php
+RUN		cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/database_name_here/$WORDPRESS_DB_NAME/" /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/username_here/$WORDPRESS_DB_USER/" /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/" /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/localhost/$WORDPRESS_DB_HOST/" /var/www/html/wordpress/wp-config.php
 
 # COPY ./conf/wp-config.php /var/www/html/wordpress/ 
 
