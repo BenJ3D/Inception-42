@@ -13,12 +13,17 @@ RUN mkdir -p /var/run/mysqld \
 	&& chown -R mysql:mysql /var/run/mysqld 
 
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
+COPY	./conf/db.sql /tmp
+COPY	./conf/entrypoint.sh /tmp
 
-RUN	echo "CREATE DATABASE IF NOT EXISTS wordpress; \
-	CREATE USER 'bducrocq'@'%' IDENTIFIED BY '4242'; \
-	GRANT ALL ON wordpress.* TO 'bducrocq'@'%'; \
-	FLUSH PRIVILEGES; \
-	ALTER USER 'root'@'localhost' IDENTIFIED BY '4242';" > db.sql
-RUN	service mysql start && mysql < db.sql
+# START
+ENTRYPOINT	["sh", "/tmp/entrypoint.sh"]
 
-CMD ["/usr/bin/mysqld_safe"]
+# RUN	echo "CREATE DATABASE IF NOT EXISTS wordpress; \
+# 	CREATE USER 'bducrocq'@'%' IDENTIFIED BY '4242'; \
+# 	GRANT ALL ON wordpress.* TO 'bducrocq'@'%'; \
+# 	FLUSH PRIVILEGES; \
+# 	ALTER USER 'root'@'localhost' IDENTIFIED BY '4242';" > db.sql
+# RUN	service mysql start && mysql < db.sql
+
+# CMD ["/usr/bin/mysqld_safe"]
