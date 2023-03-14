@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.9'
 
 volumes:
   volume_mariadb:
@@ -19,6 +19,12 @@ services:
     container_name: mariadb
     build: 
       context: ./requirements/mariadb
+      args:
+        - WORDPRESS_DB_HOST
+        - WORDPRESS_DB_USER
+        - WORDPRESS_DB_PASSWORD
+        - WORDPRESS_DB_NAME
+        - MARIADB_ROOT_PASSWD
     env_file:
       - .env
     volumes:
