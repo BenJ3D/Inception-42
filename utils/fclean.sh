@@ -1,3 +1,3 @@
-docker rmi $(docker images -q); 
-sudo rm -rf /home/$USER/data ; 
-docker volume rm $(docker volume ls -q)
+docker rmi $(docker images -q) --force; 
+sudo rm -rf /home/bducrocq/data ; 
+docker volume rm $(docker volume ls -q) --force;

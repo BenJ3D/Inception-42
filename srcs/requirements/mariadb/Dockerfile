@@ -2,10 +2,10 @@ FROM debian:buster
 
 EXPOSE 3306
 
-ARG DB_NAME
-ARG MYSQL_USER
-ARG MYSQL_PASSWORD
-ARG MYSQL_ROOT_PASSWORD
+ARG WORDPRESS_DB_NAME
+ARG WORDPRESS_DB_USER
+ARG WORDPRESS_DB_PASSWORD
+ARG MARIADB_ROOT_PASSWD
 
 RUN apt-get update -y && apt-get install -y mariadb-server
 
@@ -15,10 +15,10 @@ RUN mkdir -p /var/run/mysqld \
 RUN rm /etc/mysql/mariadb.conf.d/50-server.cnf 
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 COPY	./conf/db.sql ./
-COPY	./conf/entrypoint.sh ./
+COPY	./tools/entrypoint.sh ./
 
 # START
-# ENTRYPOINT	["sh", "./entrypoint.sh"]
+ENTRYPOINT	["sh", "./entrypoint.sh"]
 
 # RUN	echo "CREATE DATABASE IF NOT EXISTS wordpress; \
 # 	CREATE USER 'bducrocq'@'%' IDENTIFIED BY '4242'; \

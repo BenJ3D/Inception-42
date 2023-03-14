@@ -39,8 +39,8 @@ clean: down
 fclean: down
 	./utils/fclean.sh
 volumes:
-	@mkdir -p /home/$(USER)/data/wordpress
-	@mkdir -p /home/$(USER)/data/mariadb
+	@mkdir -p /home/bducrocq/data/wordpress
+	@mkdir -p /home/bducrocq/data/mariadb
 
 redb: down
 	./redb.sh

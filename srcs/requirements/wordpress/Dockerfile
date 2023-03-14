@@ -21,5 +21,5 @@ RUN		chmod +x /usr/local/bin/wp \
 EXPOSE	9000 3306
 
 # START
-COPY	./conf/entrypoint.sh /tmp
+COPY	./tools/entrypoint.sh /tmp
 ENTRYPOINT	["sh", "/tmp/entrypoint.sh"]
