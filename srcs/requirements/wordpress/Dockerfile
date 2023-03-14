@@ -20,6 +20,13 @@ RUN		chmod +x /usr/local/bin/wp \
 # PORTS
 EXPOSE	9000 3306
 
+RUN	cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/database_name_here/wordpress/" /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/username_here/bducrocq/" /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/password_here/4242/" /var/www/html/wordpress/wp-config.php \
+&&		sed -i "s/localhost/mariadb/" /var/www/html/wordpress/wp-config.php
+
+
 # START
 COPY	./tools/entrypoint.sh /tmp
 ENTRYPOINT	["sh", "/tmp/entrypoint.sh"]
