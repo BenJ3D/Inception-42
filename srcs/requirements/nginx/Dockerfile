@@ -10,7 +10,6 @@ RUN mkdir -p /etc/nginx/ssl \
 -newkey rsa:2048 -keyout /etc/ssl/private/bducrocq.42.fr.key -out /etc/ssl/certs/bducrocq.42.fr.crt;
 
 ADD ./conf/bducrocq.42.fr.conf /etc/nginx/sites-available/bducrocq.42.fr.conf
-# ADD ./conf/index.html	/var/www/bducrocq.42.fr/
 
 RUN		ln -s /etc/nginx/sites-available/bducrocq.42.fr.conf /etc/nginx/sites-enabled/bducrocq.42.fr.conf
 

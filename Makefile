@@ -34,16 +34,15 @@ restart:
 	$(COMPOSE) restart
 stop:
 	$(COMPOSE) stop
+
 clean: down
 	./utils/clean.sh
+
 fclean: down
 	./utils/fclean.sh
+
 volumes:
 	@mkdir -p /home/bducrocq/data/wordpress
 	@mkdir -p /home/bducrocq/data/mariadb
 
-redb: down
-	./redb.sh
-
-
-.PHONY: all re up down build create ps exec start restart stop clean fclean redb
+.PHONY: all re up down build create ps exec start restart stop clean fclean

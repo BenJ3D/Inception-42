@@ -39,6 +39,11 @@ services:
       - mariadb
     build: 
       context: ./requirements/wordpress
+      args:
+        - WORDPRESS_DB_HOST
+        - WORDPRESS_DB_USER
+        - WORDPRESS_DB_PASSWORD
+        - WORDPRESS_DB_NAME
     env_file:
       - .env
     ports:
