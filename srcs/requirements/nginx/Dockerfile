@@ -1,31 +1,17 @@
-FROM alpine:3.17.1
+FROM debian:buster
 
-# https://nginx.org/en/linux_packages.html
-RUN apk add openssl curl ca-certificates
-RUN printf "%s%s%s%s\n" \
-    "@nginx " \
-    "http://nginx.org/packages/alpine/v" \
-    `egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release` \
-    "/main" \
-    | tee -a /etc/apk/repositories
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get -yqq update
 
-RUN curl -o /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub
+RUN apt-get -yqq install nginx openssl
 
-RUN mv /tmp/nginx_signing.rsa.pub /etc/apk/keys/
+RUN mkdir -p /etc/nginx/ssl \
+&& openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=LY/O=42, Inc./CN=bducrocq.42.fr" \
+-newkey rsa:2048 -keyout /etc/ssl/private/bducrocq.42.fr.key -out /etc/ssl/certs/bducrocq.42.fr.crt;
 
-RUN apk add nginx
+ADD ./conf/bducrocq.42.fr.conf /etc/nginx/sites-available/bducrocq.42.fr.conf
 
-# RUN apk add nginx-module-image-filter@nginx nginx-module-njs@nginx
+RUN		ln -s /etc/nginx/sites-available/bducrocq.42.fr.conf /etc/nginx/sites-enabled/bducrocq.42.fr.conf
 
-
-ADD ./conf/default.conf /etc/nginx/http.d/default.conf
-ADD ./conf/nginx.conf /etc/nginx/nginx.conf
-
-EXPOSE 443
-RUN mkdir -p /etc/nginx/ssl && mkdir -p /var/run/nginx
-
-# CMD ["exec /bin/bash"]
-# RUN chmod 777 /etc/nginx/ssl/*
-# RUN chmod 777 -R /var/www 
-# RUN chown -R www-data:www-data /var/www/
-CMD	[ "nginx", "-g", "daemon off;" ]
+EXPOSE 443 9000
+ENTRYPOINT	[ "nginx", "-g", "daemon off;" ]

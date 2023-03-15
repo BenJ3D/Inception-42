@@ -1,2 +1,74 @@
-FROM alpine:latest
+version: '3.9'
 
+volumes:
+  volume_mariadb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o:    'bind'
+      device: /home/bducrocq/data/mariadb
+  volume_wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o:    'bind'
+      device: /home/bducrocq/data/wordpress
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: 
+      context: ./requirements/mariadb
+      args:
+        - WORDPRESS_DB_HOST
+        - WORDPRESS_DB_USER
+        - WORDPRESS_DB_PASSWORD
+        - WORDPRESS_DB_NAME
+        - MARIADB_ROOT_PASSWD
+    env_file:
+      - .env
+    volumes:
+      - volume_mariadb:/var/lib/mysql
+    networks:
+      - docker_network
+    restart:  always
+
+  wordpress:
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    build: 
+      context: ./requirements/wordpress
+      args:
+        - WORDPRESS_DB_HOST
+        - WORDPRESS_DB_USER
+        - WORDPRESS_DB_PASSWORD
+        - WORDPRESS_DB_NAME
+    env_file:
+      - .env
+    ports:
+      - 9000
+      - 3306
+    volumes:
+      - volume_wordpress:/var/www/html
+    networks:
+      - docker_network
+    restart:  always
+
+  nginx:
+    container_name: nginx
+    depends_on:
+      - wordpress
+    build:
+      context: ./requirements/nginx
+    ports:
+      - "443:443"
+    networks:
+      - docker_network
+    volumes:
+      - volume_wordpress:/var/www/html
+    restart:  always
+    
+networks:
+  docker_network:
+    driver: bridge

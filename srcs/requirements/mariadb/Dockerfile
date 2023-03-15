@@ -1,31 +1,26 @@
-FROM alpine:3.17.1
+FROM	debian:buster
 
-# https://nginx.org/en/linux_packages.html
-RUN apk add openssl curl ca-certificates
-RUN printf "%s%s%s%s\n" \
-    "@nginx " \
-    "http://nginx.org/packages/alpine/v" \
-    `egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release` \
-    "/main" \
-    | tee -a /etc/apk/repositories
+ARG WORDPRESS_DB_NAME
+ARG WORDPRESS_DB_USER
+ARG WORDPRESS_DB_PASSWORD
+ARG MARIADB_ROOT_PASSWD
 
-RUN curl -o /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub
+# UPDATE & UPGRADE THE SYSTEM
+RUN		apt-get update -y \
+&&		apt upgrade -y
 
-RUN mv /tmp/nginx_signing.rsa.pub /etc/apk/keys/
+# INSTALL MARIADB
+RUN		apt-get install -y mariadb-server
 
-RUN apk add nginx
+# CREATE THE WORDRPRESS DATABASE
+RUN		service mysql start \
+&&	mysql -e "CREATE DATABASE IF NOT EXISTS $WORDPRESS_DB_NAME; \
+		  ALTER USER 'root'@'localhost' IDENTIFIED BY '$MARIADB_ROOT_PASSWD'; \
+		  GRANT ALL PRIVILEGES ON $WORDPRESS_DB_NAME.* TO '$WORDPRESS_DB_USER'@'%' IDENTIFIED BY '$WORDPRESS_DB_PASSWORD'; \
+		  FLUSH PRIVILEGES;"
 
-# RUN apk add nginx-module-image-filter@nginx nginx-module-njs@nginx
+# PORTS
+EXPOSE	3306
 
-
-ADD ./conf/default.conf /etc/nginx/http.d/default.conf
-ADD ./conf/nginx.conf /etc/nginx/nginx.conf
-
-EXPOSE 443
-RUN mkdir -p /etc/nginx/ssl && mkdir -p /var/run/nginx
-
-# CMD ["exec /bin/bash"]
-# RUN chmod 777 /etc/nginx/ssl/*
-# RUN chmod 777 -R /var/www 
-# RUN chown -R www-data:www-data /var/www/
-CMD	[ "nginx", "-g", "daemon off;" ]
+# START
+ENTRYPOINT	["mysqld", "--bind-address=0.0.0.0"]
